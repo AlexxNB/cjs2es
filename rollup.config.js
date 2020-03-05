@@ -25,10 +25,10 @@ export default !isTest ?
         output:{ 
             file: pkg.browser, 
             name: 'cjs2es',
-            format: 'iife' 
+            format: 'umd' 
         },
         external: false,
-        plugins: [resolve(),terser()]
+        plugins: [resolve({ browser: true }),terser({ module: true})]
     }
 
 ] : [
