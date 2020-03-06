@@ -1,6 +1,6 @@
 {
   "name": "cjs2es",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Converts source of any CommonJS module to the ES module",
   "main": "dist/cjs2es.js",
   "module": "dist/cjs2es.mjs",
