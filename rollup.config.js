@@ -12,7 +12,7 @@ export default !isTest ?
         input: 'src/index.js',
         output: [
         { file: pkg.main, format: 'cjs' },
-        { file: pkg.module, format: 'es' }
+        { file: pkg.module, format: 'umd', name: 'cjs2es' }
         ],
         external: [
         ...Object.keys(pkg.dependencies || {}),
