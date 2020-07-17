@@ -1,5 +1,4 @@
-import * as acorn from 'acorn';
-import { walk } from 'estree-walker';
+import {parse} from 'acorn';
 
 export  function cjs2es(code) {
     
@@ -8,22 +7,19 @@ const require = `function require(id) {
     throw new Error(\`Cannot require modules dynamically (\${id})\`);
 }`;
 
-
     if (!/\b(require|module|exports)\b/.test(code)) return code;
 
     try {
 
-        const ast = acorn.parse(code, {ecmaVersion: 9});
+        const ast = parse(code, {ecmaVersion: 9});
         const requires = [];
 
-        walk(ast, {
-            enter: node => {
-                if (node.type === 'CallExpression' && node.callee.name === 'require') {
-                    if (node.arguments.length !== 1) return;
-                    const arg = node.arguments[0];
-                    if (arg.type !== 'Literal' || typeof arg.value !== 'string') return;
-                    requires.push(arg.value);
-                }
+        walk(ast, node => {
+            if (node.type === 'CallExpression' && node.callee.name === 'require') {
+                if (node.arguments.length !== 1) return;
+                const arg = node.arguments[0];
+                if (arg.type !== 'Literal' || typeof arg.value !== 'string') return;
+                requires.push(arg.value);
             }
         });
 
@@ -41,3 +37,16 @@ const require = `function require(id) {
 
     } catch (err) {return code}
 }
+
+function walk(node, callback) {
+    if(typeof node !== 'object') return;
+
+    if(node.type) callback(node);
+    
+    for(let key in node) {
+        let child = node[key];
+        if(child && typeof child == 'object') {
+            ( Array.isArray(child) ? child : [child] ).forEach(i => walk(i, callback));
+        } 
+    }
+};
